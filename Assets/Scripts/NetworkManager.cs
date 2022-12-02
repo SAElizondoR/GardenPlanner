@@ -6,6 +6,7 @@ using Photon.Pun;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public static NetworkManager instance;
+    private string gameVersion = "1";
 
     void Awake()
     {
@@ -24,12 +25,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        PhotonNetwork.GameVersion = gameVersion;
     }
 
     public void CreateRoom(string roomName)

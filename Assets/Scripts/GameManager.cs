@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         pickedSpawnIndex = new List<int>();
         players = new PlayerController[PhotonNetwork.PlayerList.Length];
         photonView.RPC("ImInGame", RpcTarget.AllBuffered);
-        DefaultObserverEventHandler.isTracking = false;
+        // DefaultObserverEventHandler.isTracking = false;
     }
 
     // Update is called once per frame
@@ -48,8 +48,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         for (int i = 1; i < imageTarget.transform.childCount; i++)
         {
-            imageTarget.transform.GetChild(i).gameObject.SetActive(
-                DefaultObserverEventHandler.isTracking);
+            // imageTarget.transform.GetChild(i).gameObject.SetActive(
+            //     DefaultObserverEventHandler.isTracking);
         }
     }
 
