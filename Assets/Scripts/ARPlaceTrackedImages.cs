@@ -44,7 +44,8 @@ public class ARPlaceTrackedImages : MonoBehaviour
                     !_instantiatedPrefabs.ContainsKey(imageName))
                 {
                     var newPrefab = Instantiate(curPrefab, trackedImage.transform);
-                    _instantiatedPrefabs[imageName] = newPrefab;
+                    _instantiatedPrefabs.Add(imageName, newPrefab);
+                    // _instantiatedPrefabs[imageName] = newPrefab;
                     Debug.Log($"{Time.time} -> Instantiated prefab for " +
                         $"tracked image (name: {imageName}).\n" +
                         $"newPrefab.transform.parent.name: " +
