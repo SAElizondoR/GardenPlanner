@@ -31,26 +31,26 @@ public class GameManager : MonoBehaviourPunCallbacks
         pickedSpawnIndex = new List<int>();
         players = new PlayerController[PhotonNetwork.PlayerList.Length];
         photonView.RPC("ImInGame", RpcTarget.AllBuffered);
-        // DefaultObserverEventHandler.isTracking = false;
+        ARPlaceTrackedImages.isTracking = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log("Is tracking " + DefaultObserverEventHandler.isTracking);
+        /* Debug.Log("Is tracking " + ARPlaceTrackedImages.isTracking);
         foreach (GameObject gameObject in GameObject.FindObjectsOfType(
             typeof(GameObject)))
         {
-            if (gameObject.name == "Player(Clone)")
+            if (gameObject.name == "FBX_Corona Variant(Clone)")
             {
                 gameObject.transform.SetParent(imageTarget.transform);
             }
         }
         for (int i = 1; i < imageTarget.transform.childCount; i++)
         {
-            // imageTarget.transform.GetChild(i).gameObject.SetActive(
-            //     DefaultObserverEventHandler.isTracking);
-        }
+            imageTarget.transform.GetChild(i).gameObject.SetActive(
+                ARPlaceTrackedImages.isTracking);
+        } */
     }
 
     [PunRPC]
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         playersInGame++;
         if (playersInGame == PhotonNetwork.PlayerList.Length)
         {
-            SpawnPlayer();
+            // SpawnPlayer();
         }
     }
 

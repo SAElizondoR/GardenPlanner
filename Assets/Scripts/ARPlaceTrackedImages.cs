@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 
 [RequireComponent(typeof(ARTrackedImageManager))]
-public class ARPlaceTrackedImages : MonoBehaviour
+public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
 {
     ARTrackedImageManager _trackedImagesManager;
     public GameObject[] ArPrefabs;
     private readonly Dictionary<string, GameObject> _instantiatedPrefabs
         = new();
     public TextMeshProUGUI Log;
+    public static bool isTracking;
     
     void Awake()
     {
@@ -43,15 +46,18 @@ public class ARPlaceTrackedImages : MonoBehaviour
                     StringComparison.Ordinal) == 0 &&
                     !_instantiatedPrefabs.ContainsKey(imageName))
                 {
-                    var newPrefab = Instantiate(curPrefab, trackedImage.transform);
-                    _instantiatedPrefabs.Add(imageName, newPrefab);
-                    // _instantiatedPrefabs[imageName] = newPrefab;
+                    // foreach (GameObject gameObj in Game)
+                    var newPrefab = PhotonNetwork.Instantiate(curPrefab.name,
+                        trackedImage.transform.position, Quaternion.identity, 0);
+                    newPrefab.transform.SetParent(trackedImage.transform); 
+                    isTracking = true;
                     Debug.Log($"{Time.time} -> Instantiated prefab for " +
                         $"tracked image (name: {imageName}).\n" +
                         $"newPrefab.transform.parent.name: " +
                         $"{newPrefab.transform.parent.name}.\n" +
                         $"guid: {trackedImage.referenceImage.guid}");
                     ShowAndroidToastMessage("Instantiated!");
+                    photonView.RPC("prefabsAdd", RpcTarget.All, imageName, newPrefab);
                 }
             }
         }
@@ -61,6 +67,9 @@ public class ARPlaceTrackedImages : MonoBehaviour
             _instantiatedPrefabs[trackedImage.referenceImage.name]
                 .SetActive(trackedImage.trackingState ==
                 TrackingState.Tracking);
+            for (int i = 1; i < trackedImage.transform.childCount; i++) {
+                trackedImage.transform.GetChild(i).gameObject.SetActive(isTracking);
+            }
         }
 
         foreach (var trackedImage in eventArgs.removed)
@@ -70,6 +79,11 @@ public class ARPlaceTrackedImages : MonoBehaviour
             Debug.Log($"Removed (guid: " +
                 $"{trackedImage.referenceImage.guid}).");
         }
+    }
+
+    [PunRPC]
+    void prefabsAdd(String imageName, GameObject prefab) {
+        _instantiatedPrefabs.Add(imageName, prefab);
     }
 
     private static void ShowAndroidToastMessage(string message)
