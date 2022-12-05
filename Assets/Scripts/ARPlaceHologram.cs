@@ -39,8 +39,7 @@ public class ARPlaceHologram : MonoBehaviour
     {
         var activeTouches
             = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
-        if (activeTouches.Count < 1 ||
-            activeTouches[0].phase != TouchPhase.Began)
+        if (activeTouches[0].phase != TouchPhase.Began)
         {
             return;
         }
@@ -84,5 +83,10 @@ public class ARPlaceHologram : MonoBehaviour
         }
 
         return anchor;
+    }
+
+    public void SetPrefab(GameObject prefab)
+    {
+        _prefabToPlace = prefab;
     }
 }
