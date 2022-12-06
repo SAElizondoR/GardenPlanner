@@ -6,6 +6,7 @@ using UnityEngine.XR.ARSubsystems;
 using UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 using TMPro;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(ARAnchorManager))]
 [RequireComponent(typeof(ARRaycastManager))]
@@ -20,6 +21,13 @@ public class ARPlaceHologram : MonoBehaviour
     private static readonly List<ARRaycastHit> Hits = new();
     public TextMeshProUGUI Log;
 
+    private ARPlaneManager _arPlaneManager;
+    
+    private Button _planeButton;
+
+    public Ray ray;
+    public RaycastHit hit;
+
     protected void OnEnable() {
         EnhancedTouchSupport.Enable();
     }
@@ -32,6 +40,12 @@ public class ARPlaceHologram : MonoBehaviour
         _raycastManager = GetComponent<ARRaycastManager>();
         _anchorManager = GetComponent<ARAnchorManager>();
         _anchors = new List<ARAnchor>();
+
+        _arPlaneManager = GetComponent<ARPlaneManager>();
+        _arPlaneManager.enabled = true;
+
+        _planeButton = GameObject.Find("PlaneButton").GetComponent<Button>();
+        _planeButton.onClick.AddListener(TogglePlaneDetection);
     }
 
     // Update is called once per frame
@@ -48,7 +62,10 @@ public class ARPlaceHologram : MonoBehaviour
         if (_raycastManager.Raycast(activeTouches[0].screenPosition, Hits,
             trackableTypes))
         {
-            CreateAnchor(Hits[0]);
+            if (_arPlaneManager.enabled)
+            {
+                CreateAnchor(Hits[0]);
+            }
             Debug.Log($"Instantiated on: {Hits[0].hitType}");
         }
     }
@@ -59,8 +76,7 @@ public class ARPlaceHologram : MonoBehaviour
 
         if (hit.trackable is ARPlane plane)
         {
-            var planeManager = GetComponent<ARPlaneManager>();
-            if (planeManager)
+            if (_arPlaneManager)
             {
                 var oldPrefab = _anchorManager.anchorPrefab;
                 _anchorManager.anchorPrefab = _prefabToPlace;
@@ -69,17 +85,17 @@ public class ARPlaceHologram : MonoBehaviour
                 Debug.Log($"Created anchor attachment for plane (id: " +
                     "{anchor.nativePtr})");
             }
-            else
-            {
-                var instantiatedObject = Instantiate(_prefabToPlace,
-                    hit.pose.position, hit.pose.rotation);
-                anchor = instantiatedObject.GetComponent<ARAnchor>();
-                if (anchor == null)
-                {
-                    anchor = instantiatedObject.AddComponent<ARAnchor>();
-                }
-                Debug.Log($"Created regular anchor (id: {anchor.nativePtr})");
-            }
+            //else
+            //{
+            //    var instantiatedObject = Instantiate(_prefabToPlace,
+            //        hit.pose.position, hit.pose.rotation);
+            //    anchor = instantiatedObject.GetComponent<ARAnchor>();
+            //    if (anchor == null)
+            //    {
+            //        anchor = instantiatedObject.AddComponent<ARAnchor>();
+            //    }
+            //    Debug.Log($"Created regular anchor (id: {anchor.nativePtr})");
+            //}
         }
 
         return anchor;
@@ -87,6 +103,16 @@ public class ARPlaceHologram : MonoBehaviour
 
     public void SetPrefab(GameObject prefab)
     {
-        _prefabToPlace = prefab;
+        _prefabToPlace = Instantiate(prefab);
+    }
+
+    public void TogglePlaneDetection()
+    {
+        _arPlaneManager.enabled = !_arPlaneManager.enabled;
+
+        foreach (ARPlane plane in _arPlaneManager.trackables)
+        {
+            plane.gameObject.SetActive(_arPlaneManager.enabled);
+        }
     }
 }
