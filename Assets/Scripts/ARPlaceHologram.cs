@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -53,7 +52,8 @@ public class ARPlaceHologram : MonoBehaviour
     {
         var activeTouches
             = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
-        if (activeTouches[0].phase != TouchPhase.Began)
+        Debug.Log($"Active touches: {activeTouches.Count}");
+        if (activeTouches.Count < 1 || activeTouches[0].phase != TouchPhase.Began)
         {
             return;
         }
