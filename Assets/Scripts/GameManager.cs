@@ -18,10 +18,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     [Header("Reference")]
     public GameObject imageTarget;
     public static GameManager instance;
+    ARPlaceTrackedImages _placeTrackedImages;
+    
 
     void Awake()
     {
         instance = this;
+        _placeTrackedImages = GetComponent<ARPlaceTrackedImages>();
     }
 
     // Start is called before the first frame update
@@ -31,25 +34,25 @@ public class GameManager : MonoBehaviourPunCallbacks
         pickedSpawnIndex = new List<int>();
         players = new PlayerController[PhotonNetwork.PlayerList.Length];
         photonView.RPC("ImInGame", RpcTarget.AllBuffered);
-        // DefaultObserverEventHandler.isTracking = false;
+        _placeTrackedImages.isTracking = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log("Is tracking " + DefaultObserverEventHandler.isTracking);
+        Debug.Log("Is tracking " + _placeTrackedImages.isTracking);
         foreach (GameObject gameObject in GameObject.FindObjectsOfType(
             typeof(GameObject)))
         {
-            if (gameObject.name == "Player(Clone)")
+            if (gameObject.name == "cat(Clone)")
             {
                 gameObject.transform.SetParent(imageTarget.transform);
             }
         }
         for (int i = 1; i < imageTarget.transform.childCount; i++)
         {
-            // imageTarget.transform.GetChild(i).gameObject.SetActive(
-            //     DefaultObserverEventHandler.isTracking);
+            imageTarget.transform.GetChild(i).gameObject.SetActive(
+                _placeTrackedImages.isTracking);
         }
     }
 

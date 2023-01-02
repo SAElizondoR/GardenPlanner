@@ -4,6 +4,8 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
+using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine.UI;
 
@@ -26,6 +28,8 @@ public class ARPlaceHologram : MonoBehaviour
 
     public Ray ray;
     public RaycastHit hit;
+    [SerializeField]
+    private ARPlaceTrackedImages _placeTrackedImages;
 
     protected void OnEnable() {
         EnhancedTouchSupport.Enable();
@@ -52,13 +56,12 @@ public class ARPlaceHologram : MonoBehaviour
     {
         var activeTouches
             = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
-        Debug.Log($"Active touches: {activeTouches.Count}");
+        // Debug.Log($"Active touches: {activeTouches.Count}");
         if (activeTouches.Count < 1 || activeTouches[0].phase != TouchPhase.Began)
         {
             return;
         }
-        const TrackableType trackableTypes = TrackableType.FeaturePoint |
-            TrackableType.PlaneWithinPolygon;
+        const TrackableType trackableTypes = TrackableType.AllTypes;
         if (_raycastManager.Raycast(activeTouches[0].screenPosition, Hits,
             trackableTypes))
         {
@@ -78,12 +81,33 @@ public class ARPlaceHologram : MonoBehaviour
         {
             if (_arPlaneManager)
             {
+                GameObject trackedImageGameObject = _placeTrackedImages.trackedImageGameObject;
+                Debug.Log($"Tracked image game object: {trackedImageGameObject}");
                 var oldPrefab = _anchorManager.anchorPrefab;
-                _anchorManager.anchorPrefab = _prefabToPlace;
+                GameObject curObject = null;
+                foreach (GameObject gameObject in GameObject.FindObjectsOfType(typeof(GameObject)))
+                {
+                    if (gameObject.name == "cat(Clone)")
+                    {
+                        Debug.Log("Found clone");
+                        curObject = gameObject;
+                    }
+                }
+                Debug.Log($"Current object: {curObject}");
+                if (!curObject)
+                {
+                    Debug.Log("Photon instantiating...");
+                    curObject = PhotonNetwork.Instantiate("cat", trackedImageGameObject.transform.position, Quaternion.identity, 0);
+                    Debug.Log("Photon instantiated!");
+                }
+                _anchorManager.anchorPrefab = curObject;
                 anchor = _anchorManager.AttachAnchor(plane, hit.pose);
-                _anchorManager.anchorPrefab = oldPrefab;
-                Debug.Log($"Created anchor attachment for plane (id: " +
-                    "{anchor.nativePtr})");
+                // _anchorManager.anchorPrefab = oldPrefab;
+                Debug.Log("Created anchor attachment for plane (id: " +
+                    $"{anchor.nativePtr})");
+                GameObject target = anchor.gameObject;
+                target.transform.SetParent(trackedImageGameObject.transform);
+                // target.transform.localPosition = Vector3.zero;
             }
             //else
             //{
