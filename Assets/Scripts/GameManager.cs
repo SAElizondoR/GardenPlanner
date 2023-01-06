@@ -7,7 +7,7 @@ using System.Linq;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    [Header("Status")]
+    /* [Header("Status")]
     public bool gameEnded = false;
     [Header("Players")]
     public string playerPrefabLocation;
@@ -91,5 +91,5 @@ public class GameManager : MonoBehaviourPunCallbacks
     public PlayerController GetPlayer(GameObject playerObj)
     {
         return players.First(x => x.gameObject == playerObj);
-    }
+    } */
 }

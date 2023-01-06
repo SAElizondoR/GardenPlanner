@@ -13,23 +13,22 @@ using TMPro;
 public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
 {
     private ARTrackedImageManager _trackedImagesManager;
-    private GameObject curObject;
-    private readonly Dictionary<string, GameObject> _instantiatedPrefabs
-        = new();
+    // private GameObject curObject;
+    // private readonly Dictionary<string, GameObject> _instantiatedPrefabs
+    //     = new();
     // private bool isReady;
-    public bool isTracking;
+    // public bool isTracking;
     public GameObject trackedImageGameObject;
     private ARSessionOrigin _sessionOrigin;
-
     [SerializeField]
     private ARPlaneManager _planeManager;
-    private ARPlane _plane;
+    public ARPlane _plane;
+    private bool planeDetected;
     
     void Awake()
     {
-        // isTracking = false;
         _plane = null;
-        // curObject = null;
+        planeDetected = false;
         _trackedImagesManager = GetComponent<ARTrackedImageManager>();
         _sessionOrigin = GetComponent<ARSessionOrigin>();
         _planeManager = GetComponent<ARPlaneManager>();
@@ -46,24 +45,11 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
     {
         base.OnDisable();
         _trackedImagesManager.trackedImagesChanged -= OnTrackedImagesChanged;
+        _planeManager.planesChanged -= PlanesChanged;
     }
 
     private void FixedUpdate()
     {
-        // Debug.Log("Is tracking: " + isTracking);
-
-        /* foreach (GameObject gameObject in GameObject.FindObjectsOfType(typeof(GameObject)))
-        {
-            if (gameObject.name == "cat(Clone)")
-            {
-                curObject = gameObject;
-                curObject.name = "cat";
-                gameObject.transform.SetParent(trackedImageGameObject.transform);
-                gameObject.transform.localPosition = Vector3.zero;
-                isTracking = true;
-            }
-        } */
-
         /* if (trackedImage)
         {
             for (int i = 1; i < trackedImage.transform.childCount; i++)
@@ -77,8 +63,8 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
     {
         if (args.added != null && args.added.Count > 0)
         {
-            // Debug.Log("Detected plane");
             _plane = args.added[0];
+            planeDetected = true;
         }
     }
 
@@ -89,20 +75,12 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
         {
             Debug.Log($"Tracking image: {trackedImage.name}");
             trackedImageGameObject = GameObject.Find(trackedImage.name);
-            Debug.Log($"Tracked image game object: {trackedImageGameObject}");
             _sessionOrigin.MakeContentAppearAt(trackedImageGameObject.transform, Vector3.zero, Quaternion.identity);
-            StartCoroutine(WaitPlane());
             Debug.Log("Image tracked!");
-            /* foreach (GameObject gameObject in GameObject.FindObjectsOfType(typeof(GameObject)))
-            {
-                if (gameObject.name == "cat(Clone)")
-                {
-                    Debug.Log("Found clone");
-                    curObject = gameObject;
-                    break;
-                }
-            }
-            Debug.Log($"Current object: {curObject}");
+            WaitPlane();
+            Debug.Log("Plane detected");
+            ShowAndroidToastMessage("Sync ready!");
+            /*
             if (!curObject) {
                 Debug.Log("Photon instantiating...");
                 curObject = PhotonNetwork.Instantiate("cat", trackedImageGameObject.transform.position, Quaternion.identity, 0);
@@ -134,29 +112,28 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
             } */
         }
 
-        foreach (var image in eventArgs.updated)
+        /* foreach (var image in eventArgs.updated)
         {
-            // trackedImage = image;
-            /* _instantiatedPrefabs[trackedImage.referenceImage.name]
+            trackedImage = image;
+            _instantiatedPrefabs[trackedImage.referenceImage.name]
                 .SetActive(trackedImage.trackingState ==
-                TrackingState.Tracking); */
+                TrackingState.Tracking);
         }
 
         foreach (var trackedImage in eventArgs.removed)
         {
-            /* Destroy(_instantiatedPrefabs[trackedImage.referenceImage.name]);
+            Destroy(_instantiatedPrefabs[trackedImage.referenceImage.name]);
             _instantiatedPrefabs.Remove(trackedImage.referenceImage.name);
             Debug.Log($"Removed (guid: " +
-                $"{trackedImage.referenceImage.guid})."); */
-        }
+                $"{trackedImage.referenceImage.guid}).");
+        } */
     }
 
-    private IEnumerator WaitPlane()
+    private void WaitPlane()
     {
-        while (!_plane)
+        while (!planeDetected == false)
         {
             Debug.Log("Waiting plane...");
-            yield return new WaitForSeconds(1);
         }
     }
 

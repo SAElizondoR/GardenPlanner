@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
-    [HideInInspector]
+    /* [HideInInspector]
     public int id;
     [Header("Component")]
     public Rigidbody rig;
@@ -130,5 +130,5 @@ public class PlayerController : MonoBehaviourPunCallbacks
             = Color.red;
         yield return new WaitForSeconds(2);
         this.gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
-    }
+    } */
 }

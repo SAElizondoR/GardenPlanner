@@ -20,7 +20,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     private string _prefabToPlaceName;
     private ARRaycastManager _raycastManager;
     private ARAnchorManager _anchorManager;
-    private ARPlaneManager _arPlaneManager;
+    private ARPlaneManager _planeManager;
     private List<ARAnchor> _anchors;
     private static readonly List<ARRaycastHit> Hits = new();
     private Button _plantsButton;
@@ -44,9 +44,9 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     protected void Awake() {
         _raycastManager = GetComponent<ARRaycastManager>();
         _anchorManager = GetComponent<ARAnchorManager>();
-        _arPlaneManager = GetComponent<ARPlaneManager>();
+        _planeManager = GetComponent<ARPlaneManager>();
         _sessionOrigin = GetComponent<ARSessionOrigin>();
-        _arPlaneManager.enabled = true;
+        _planeManager.enabled = true;
         _anchors = new List<ARAnchor>();
         _prefabToPlaceName = null;
         _curObject = null;
@@ -56,7 +56,6 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         _catButton.onClick.AddListener(delegate{SetPrefab("cat");});
         _planeButton = GameObject.Find("PlaneButton").GetComponent<Button>();
         _planeButton.onClick.AddListener(TogglePlaneDetection);
-        // SetPrefab("cat");
     }
 
     // Update is called once per frame
@@ -69,29 +68,25 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
 
         var activeTouches
             = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
-        // Debug.Log($"Active touches: {activeTouches.Count}");
         if (activeTouches.Count < 1 || activeTouches[0].phase !=
-            TouchPhase.Began
-        //    || IsPointOverUIObject(activeTouches[0].screenPosition, activeTouches[0].finger.index)
-            )
+            TouchPhase.Began)
         {
             return;
         }
-
+        _prefabToPlaceName = null;
         const TrackableType trackableTypes = TrackableType.Planes;
         if (_raycastManager.Raycast(activeTouches[0].screenPosition, Hits,
             trackableTypes))
         {
-            if (_arPlaneManager.enabled)
+            if (_planeManager.enabled)
             {
                 CreateAnchor(Hits[0]);
-                _prefabToPlaceName = null;
             }
             Debug.Log($"Instantiated on: {Hits[0].hitType}");
         }
     }
 
-    private bool IsPointOverUIObject(Vector2 pos, int fingerId)
+    /* private bool IsPointOverUIObject(Vector2 pos, int fingerId)
     {
         Debug.Log("Checking if pointer tr UI");
         if (EventSystem.current.IsPointerOverGameObject(fingerId))
@@ -107,7 +102,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         EventSystem.current.RaycastAll(eventPosition, results);
         Debug.Log($"UI Element: {results.Count > 0}");
         return results.Count > 0;
-    }
+    } */
 
     ARAnchor CreateAnchor(in ARRaycastHit hit)
     {
@@ -115,14 +110,13 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
 
         if (hit.trackable is ARPlane plane)
         {
-            if (_arPlaneManager)
+            if (_planeManager)
             {
                 GameObject trackedImageGameObject
                     = _placeTrackedImages.trackedImageGameObject;
                 Debug.Log(
                     $"Tracked image game object:{trackedImageGameObject}");
                 // var oldPrefab = _anchorManager.anchorPrefab;
-                // GameObject curObject = null;
                 
                 Debug.Log($"Current object: {_curObject}");
                 if (_curObject)
@@ -133,13 +127,12 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
                     hit.pose.position, trackedImageGameObject.transform.rotation, 0);
                 _curObject.transform.parent = trackedImageGameObject.transform;
                 Debug.Log("Photon instantiated!");
-                Debug.Log($"Photon view: {this.photonView}");
                 this.photonView.RPC("PutPrefabInstance", RpcTarget.Others, _prefabToPlaceName);
-                // _anchorManager.anchorPrefab = _curObject;
-                // anchor = _anchorManager.AttachAnchor(plane, hit.pose);
+                _anchorManager.anchorPrefab = _curObject;
+                anchor = _anchorManager.AttachAnchor(plane, hit.pose);
                 // _anchorManager.anchorPrefab = oldPrefab;
-                // Debug.Log("Created anchor attachment for plane (id: " +
-               //      $"{anchor.nativePtr})");
+                Debug.Log("Created anchor attachment for plane (id: " +
+                     $"{anchor.nativePtr})");
                 // GameObject target = anchor.gameObject;
                 // target.transform.SetParent(trackedImageGameObject.transform);
                 // target.transform.localPosition = Vector3.zero;
@@ -180,22 +173,23 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
             }
         }
 
-        /* _anchorManager.anchorPrefab = _curObject;
-        ARAnchor anchor = _anchorManager.AttachAnchor(plane, hit.pose);
+        _anchorManager.anchorPrefab = _curObject;
+        ARPlane plane = _placeTrackedImages._plane;
+        ARAnchor anchor = _anchorManager.AttachAnchor(plane, new Pose(plane.center, Quaternion.identity));
         Debug.Log("Created anchor attachment for plane (id: " +
             $"{anchor.nativePtr})");
-        GameObject target = anchor.gameObject;
-        target.transform.SetParent(trackedImageGameObject.transform); */
+        // GameObject target = anchor.gameObject;
+        // target.transform.SetParent(trackedImageGameObject.transform);
     }
 
     public void TogglePlaneDetection()
     {
         Debug.Log("Change plane detection");
-        _arPlaneManager.enabled = !_arPlaneManager.enabled;
+        _planeManager.enabled = !_planeManager.enabled;
 
-        foreach (ARPlane plane in _arPlaneManager.trackables)
+        foreach (ARPlane plane in _planeManager.trackables)
         {
-            plane.gameObject.SetActive(_arPlaneManager.enabled);
+            plane.gameObject.SetActive(_planeManager.enabled);
         }
     }
 }
