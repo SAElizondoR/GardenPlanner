@@ -12,11 +12,11 @@ using TMPro;
 [RequireComponent(typeof(ARTrackedImageManager))]
 public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
 {
-    ARTrackedImageManager _trackedImagesManager;
-    public GameObject curObject;
+    private ARTrackedImageManager _trackedImagesManager;
+    private GameObject curObject;
     private readonly Dictionary<string, GameObject> _instantiatedPrefabs
         = new();
-    public TextMeshProUGUI Log;
+    // private bool isReady;
     public bool isTracking;
     public GameObject trackedImageGameObject;
     private ARSessionOrigin _sessionOrigin;
@@ -27,10 +27,9 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
     
     void Awake()
     {
-        isTracking = false;
-        // trackedImage = null;
+        // isTracking = false;
         _plane = null;
-        curObject = null;
+        // curObject = null;
         _trackedImagesManager = GetComponent<ARTrackedImageManager>();
         _sessionOrigin = GetComponent<ARSessionOrigin>();
         _planeManager = GetComponent<ARPlaneManager>();
@@ -88,12 +87,12 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
     {
         foreach (var trackedImage in eventArgs.added)
         {
-            /* if (curObject)
-                continue; */
             Debug.Log($"Tracking image: {trackedImage.name}");
             trackedImageGameObject = GameObject.Find(trackedImage.name);
             Debug.Log($"Tracked image game object: {trackedImageGameObject}");
+            _sessionOrigin.MakeContentAppearAt(trackedImageGameObject.transform, Vector3.zero, Quaternion.identity);
             StartCoroutine(WaitPlane());
+            Debug.Log("Image tracked!");
             /* foreach (GameObject gameObject in GameObject.FindObjectsOfType(typeof(GameObject)))
             {
                 if (gameObject.name == "cat(Clone)")
@@ -112,7 +111,7 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
             curObject.name = "cat";
             gameObject.transform.SetParent(trackedImageGameObject.transform);
             gameObject.transform.localPosition = Vector3.zero; */
-            isTracking = true;
+            // isReady = true;
             /* var imageName = trackedImage.referenceImage.name;
 
             foreach (var curPrefab in ArPrefabs)

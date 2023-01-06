@@ -42,6 +42,7 @@ public class RotateScaleObject : MonoBehaviour
         slidersPanel = GameObject.Find("SlidersPanel");
         slidersPanel.gameObject.SetActive(false);
 
+        Debug.Log($"Game object: {gameObject}");
         gameObject.GetComponent<BoxCollider>().enabled = true;
     }
 
