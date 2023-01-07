@@ -22,12 +22,12 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
     private ARSessionOrigin _sessionOrigin;
     [SerializeField]
     private ARPlaneManager _planeManager;
-    public ARPlane _plane;
+    public List<ARPlane> _planes;
     private bool planeDetected;
     
     void Awake()
     {
-        _plane = null;
+        _planes = new List<ARPlane>();
         planeDetected = false;
         _trackedImagesManager = GetComponent<ARTrackedImageManager>();
         _sessionOrigin = GetComponent<ARSessionOrigin>();
@@ -61,11 +61,15 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
 
     private void PlanesChanged(ARPlanesChangedEventArgs args)
     {
-        if (args.added != null && args.added.Count > 0)
+        foreach (var plane in args.added)
         {
-            _plane = args.added[0];
-            planeDetected = true;
+            _planes.Add(plane);
         }
+        foreach (var plane in args.removed)
+        {
+            _planes.Remove(plane);
+        }
+        planeDetected = _planes.Count > 0 ? true : false;
     }
 
     private void OnTrackedImagesChanged(
@@ -77,9 +81,7 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
             trackedImageGameObject = GameObject.Find(trackedImage.name);
             _sessionOrigin.MakeContentAppearAt(trackedImageGameObject.transform, Vector3.zero, Quaternion.identity);
             Debug.Log("Image tracked!");
-            WaitPlane();
-            Debug.Log("Plane detected");
-            ShowAndroidToastMessage("Sync ready!");
+            StartCoroutine(WaitPlane());
             /*
             if (!curObject) {
                 Debug.Log("Photon instantiating...");
@@ -129,12 +131,15 @@ public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
         } */
     }
 
-    private void WaitPlane()
+    private IEnumerator WaitPlane()
     {
-        while (!planeDetected == false)
+        while (planeDetected == false)
         {
             Debug.Log("Waiting plane...");
+            yield return new WaitForSeconds(1);
         }
+        Debug.Log("Plane detected");
+        ShowAndroidToastMessage("Sync ready!");
     }
 
     private static void ShowAndroidToastMessage(string message)
