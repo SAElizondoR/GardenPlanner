@@ -26,6 +26,11 @@ public class RotateScaleObject : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        Debug.Log($"Awake object: {gameObject}");
+        if (!gameObject)
+        {
+            return;
+        }
         scaleSlider = GameObject.Find("ScaleSlider").GetComponent<Slider>();
         scaleSlider.minValue = scaleMinValue;
         scaleSlider.maxValue = scaleMaxValue;
@@ -42,7 +47,7 @@ public class RotateScaleObject : MonoBehaviour
         slidersPanel = GameObject.Find("SlidersPanel");
         slidersPanel.gameObject.SetActive(false);
 
-        Debug.Log($"Game object: {gameObject}");
+        Debug.Log($"Game object (RotateScale): {gameObject}");
         gameObject.GetComponent<BoxCollider>().enabled = true;
     }
 

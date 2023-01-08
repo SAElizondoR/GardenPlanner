@@ -21,6 +21,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     private ARRaycastManager _raycastManager;
     private ARAnchorManager _anchorManager;
     private ARPlaneManager _planeManager;
+    // public AROcclusionManager occlusionManager;
     private List<ARAnchor> _anchors;
     private static readonly List<ARRaycastHit> Hits = new();
     private Button _plantsButton;
@@ -28,7 +29,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     private Button _planeButton;
     [SerializeField]
     private ARPlaceTrackedImages _placeTrackedImages;
-    // private GameObject _curObject;
+    private GameObject _curObject;
     private List<GameObject> _placedObjects;
     private ARSessionOrigin _sessionOrigin;
     private bool putObject;
@@ -51,7 +52,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         _planeManager.enabled = true;
         _anchors = new List<ARAnchor>();
         _prefabToPlaceName = null;
-        // _curObject = null;
+        _curObject = null;
         _placedObjects = new List<GameObject>();
         _plantsButton = GameObject.Find("PlantsButton").GetComponent<Button>();
         _plantsButton.onClick.AddListener(
@@ -66,11 +67,27 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+        /* if (occlusionManager.descriptor == null || occlusionManager.descriptor.environmentDepthImageSupported == Supported.Unsupported)
+        {
+            Debug.Log("Environment depth is not supported on this device.");
+        }
+        else if (occlusionManager.descriptor.environmentDepthImageSupported == Supported.Unknown)
+        {
+            Debug.Log("Determining environment depth support...");
+        }
+        else if (occlusionManager.descriptor.environmentDepthImageSupported == Supported.Supported)
+        {
+            Debug.Log("Environment depth is supported on this device.");
+        } */
         var activeTouches
             = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
         if (activeTouches.Count < 1 || activeTouches[0].phase !=
             TouchPhase.Began || putObject == false)
         {
+            /* if (putObject == false && _curObject != null)
+            {
+                break;
+            } */
             return;
         }
         putObject = false;
@@ -78,6 +95,14 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         if (_raycastManager.Raycast(activeTouches[0].screenPosition, Hits,
             trackableTypes))
         {
+            if (putObject == false && _curObject != null)
+            {
+                if (Hits.Count > 0)
+                {
+
+                }
+                return;
+            }
             if (_planeManager.enabled)
             {
                 CreateAnchor(Hits[0]);
@@ -125,16 +150,16 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
                 Debug.Log("Photon instantiating...");
                 // Debug.Log($": {_prefabToPlaceName}, {hit.pose},
                 // {trackedImageGameObject}");
-                _anchorManager.anchorPrefab = PhotonNetwork.Instantiate(
+                _curObject = PhotonNetwork.Instantiate(
                     _prefabToPlaceName, Vector3.zero,
                     Quaternion.identity, 0);
-                Debug.Log($"Current object: {_anchorManager.anchorPrefab}");    
+                Debug.Log($"Current object: {_curObject}");    
                 // curObject.transform.parent
                 //     = trackedImageGameObject.transform;
                 // _placedObjects.Add(curObject);
                 Debug.Log("Photon instantiated!");
-                Debug.Log($"Position: {hit.pose.position}, " +
-                    $"rotation: {hit.pose.rotation}");
+                // Debug.Log($"Position: {hit.pose.position}, " +
+                //     $"rotation: {hit.pose.rotation}");
                 this.photonView.RPC("PutPrefabInstance", RpcTarget.Others,
                     _prefabToPlaceName, hit.pose.position, hit.pose.rotation);
                 // _anchorManager.anchorPrefab = curObject;
@@ -142,6 +167,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
                 // _anchorManager.anchorPrefab = oldPrefab;
                 Debug.Log("Created anchor attachment for plane (id: " +
                      $"{anchor.nativePtr})");
+                _curObject.transform.SetParent(anchor.transform);
                 GameObject target = anchor.gameObject;
                 target.transform.SetParent(trackedImageGameObject.transform);
                 // target.transform.localPosition = Vector3.zero;
@@ -182,7 +208,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
             if (gameObject.name == prefabName + "(Clone)")
             {
                 Debug.Log($"Found clone {prefabName}");
-                _anchorManager.anchorPrefab = gameObject;
+                _curObject = gameObject;
                 // curObject.transform.parent
                 //     = _placeTrackedImages.trackedImageGameObject.transform;
                 // _placedObjects.Add(curObject);
@@ -195,6 +221,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
             _placeTrackedImages._planes[0], new Pose(position, rotation));
         Debug.Log("Created anchor attachment for plane (id: " +
             $"{anchor.nativePtr}) at pose");
+        _curObject.transform.SetParent(anchor.transform);
         GameObject target = anchor.gameObject;
         target.transform.SetParent(
             _placeTrackedImages.trackedImageGameObject.transform);

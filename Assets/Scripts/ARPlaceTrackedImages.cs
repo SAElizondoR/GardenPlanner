@@ -13,11 +13,7 @@ using TMPro;
 public class ARPlaceTrackedImages : MonoBehaviourPunCallbacks
 {
     private ARTrackedImageManager _trackedImagesManager;
-    // private GameObject curObject;
-    // private readonly Dictionary<string, GameObject> _instantiatedPrefabs
-    //     = new();
     // private bool isReady;
-    // public bool isTracking;
     public GameObject trackedImageGameObject;
     private ARSessionOrigin _sessionOrigin;
     [SerializeField]
