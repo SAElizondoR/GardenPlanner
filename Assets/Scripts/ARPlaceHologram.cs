@@ -24,6 +24,7 @@ public class ARPlaceHologram : MonoBehaviour
     private ARPlaneManager _arPlaneManager;
     
     private Button _planeButton;
+    private GameObject _slidersPanel;
 
     public Ray ray;
     public RaycastHit hit;
@@ -46,6 +47,9 @@ public class ARPlaceHologram : MonoBehaviour
 
         _planeButton = GameObject.Find("PlaneButton").GetComponent<Button>();
         _planeButton.onClick.AddListener(TogglePlaneDetection);
+
+        _slidersPanel = GameObject.Find("SlidersPanel");
+        _slidersPanel.gameObject.SetActive(false);
     }
 
     // Update is called once per frame

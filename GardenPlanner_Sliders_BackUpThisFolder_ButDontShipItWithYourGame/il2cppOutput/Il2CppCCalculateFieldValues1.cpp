@@ -31986,10 +31986,12 @@ struct ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275  : public MonoB
 	ARPlaneManager_t9DA6C512BDCFFBEE8B3DAA7170EB3BFFDE26A928* ____arPlaneManager_10;
 	// UnityEngine.UI.Button ARPlaceHologram::_planeButton
 	Button_t6786514A57F7AFDEE5431112FEA0CAB24F5AE098* ____planeButton_11;
+	// UnityEngine.GameObject ARPlaceHologram::_slidersPanel
+	GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ____slidersPanel_12;
 	// UnityEngine.Ray ARPlaceHologram::ray
-	Ray_t2B1742D7958DC05BDC3EFC7461D3593E1430DC00 ___ray_12;
+	Ray_t2B1742D7958DC05BDC3EFC7461D3593E1430DC00 ___ray_13;
 	// UnityEngine.RaycastHit ARPlaceHologram::hit
-	RaycastHit_t6F30BD0B38B56401CA833A1B87BD74F2ACD2F2B5 ___hit_13;
+	RaycastHit_t6F30BD0B38B56401CA833A1B87BD74F2ACD2F2B5 ___hit_14;
 };
 
 struct ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275_StaticFields
@@ -44543,9 +44545,9 @@ IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5704[15] =
 IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5705[2] = 
 {
 	static_cast<int32_t>(offsetof(GUILayoutOption_t8B0AA056521747053A3176FCC43E9C3608940A14, ___type_0)),static_cast<int32_t>(offsetof(GUILayoutOption_t8B0AA056521747053A3176FCC43E9C3608940A14, ___value_1)),};
-IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5708[10] = 
+IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5708[11] = 
 {
-	static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____prefabToPlace_4)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____raycastManager_5)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____anchorManager_6)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____anchors_7)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275_StaticFields, ___Hits_8)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___Log_9)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____arPlaneManager_10)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____planeButton_11)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___ray_12)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___hit_13)),};
+	static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____prefabToPlace_4)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____raycastManager_5)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____anchorManager_6)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____anchors_7)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275_StaticFields, ___Hits_8)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___Log_9)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____arPlaneManager_10)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____planeButton_11)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____slidersPanel_12)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___ray_13)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___hit_14)),};
 IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5709[3] = 
 {
 	static_cast<int32_t>(offsetof(U3CU3Ec__DisplayClass8_0_t1027FCF9FE297518C31BDC4FA2F67E53E5994B41, ___toastClass_0)),static_cast<int32_t>(offsetof(U3CU3Ec__DisplayClass8_0_t1027FCF9FE297518C31BDC4FA2F67E53E5994B41, ___unityActivity_1)),static_cast<int32_t>(offsetof(U3CU3Ec__DisplayClass8_0_t1027FCF9FE297518C31BDC4FA2F67E53E5994B41, ___message_2)),};
