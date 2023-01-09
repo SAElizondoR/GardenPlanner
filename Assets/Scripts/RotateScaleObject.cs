@@ -27,10 +27,10 @@ public class RotateScaleObject : MonoBehaviour
     void Awake()
     {
         Debug.Log($"Awake object: {gameObject}");
-        if (!gameObject)
+        /* if (!gameObject)
         {
             return;
-        }
+        } */
         scaleSlider = GameObject.Find("ScaleSlider").GetComponent<Slider>();
         scaleSlider.minValue = scaleMinValue;
         scaleSlider.maxValue = scaleMaxValue;
