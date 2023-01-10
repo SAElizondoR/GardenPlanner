@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -10,29 +11,39 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
+using System.Linq;
 
 [RequireComponent(typeof(ARAnchorManager))]
 [RequireComponent(typeof(ARRaycastManager))]
 [RequireComponent(typeof(ARPlaneManager))]
 public class ARPlaceHologram : MonoBehaviourPunCallbacks
 {
+    public GameObject placementIndicator;
+    private bool placementIndicatorEnabled;
+    private bool placementPoseIsValid;
+    private Pose placementPose;
+
     [SerializeField]
     private string _prefabToPlaceName;
     private ARRaycastManager _raycastManager;
     private ARAnchorManager _anchorManager;
     private ARPlaneManager _planeManager;
-    // public AROcclusionManager occlusionManager;
-    private List<ARAnchor> _anchors;
+    // private List<ARAnchor> _anchors;
     private static readonly List<ARRaycastHit> Hits = new();
-    private Button _plantsButton;
-    private Button _catButton;
-    private Button _planeButton;
     [SerializeField]
     private ARPlaceTrackedImages _placeTrackedImages;
-    private GameObject _curObject;
-    private List<GameObject> _placedObjects;
-    private ARSessionOrigin _sessionOrigin;
-    private bool putObject;
+    private GameObject _curObject;  // selected object
+    // private List<GameObject> _placedObjects;
+    // private ARSessionOrigin _sessionOrigin;
+    // if a button to put an object has been selected
+    // private bool puttingObject;
+    [Serializable]
+    public struct NamedPrefab {
+        public string name;
+        public GameObject prefab;
+    }
+    public NamedPrefab[] _prefabsToPlace;
+    private IDictionary<string, GameObject> _prefabsDict;
 
     public override void OnEnable() {
         base.OnEnable();
@@ -48,66 +59,80 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         _raycastManager = GetComponent<ARRaycastManager>();
         _anchorManager = GetComponent<ARAnchorManager>();
         _planeManager = GetComponent<ARPlaneManager>();
-        _sessionOrigin = GetComponent<ARSessionOrigin>();
+        // _sessionOrigin = GetComponent<ARSessionOrigin>();
         _planeManager.enabled = true;
-        _anchors = new List<ARAnchor>();
+        // _anchors = new List<ARAnchor>();
         _prefabToPlaceName = null;
         _curObject = null;
-        _placedObjects = new List<GameObject>();
-        _plantsButton = GameObject.Find("PlantsButton").GetComponent<Button>();
-        _plantsButton.onClick.AddListener(
-            delegate{SetPrefab("FBX_Corona Variant");});
-        _catButton = GameObject.Find("CatButton").GetComponent<Button>();
-        _catButton.onClick.AddListener(delegate{SetPrefab("cat");});
-        _planeButton = GameObject.Find("PlaneButton").GetComponent<Button>();
-        _planeButton.onClick.AddListener(TogglePlaneDetection);
-        putObject = false;
+        // _placedObjects = new List<GameObject>();
+        // puttingObject = false;
+        placementIndicatorEnabled = true;
+        placementPoseIsValid = false;
+        _prefabsDict = _prefabsToPlace.ToDictionary(item => item.name, item => item.prefab);
     }
 
     // Update is called once per frame
     void Update()
     {
-        /* if (occlusionManager.descriptor == null || occlusionManager.descriptor.environmentDepthImageSupported == Supported.Unsupported)
+        if (placementIndicatorEnabled == false)
         {
-            Debug.Log("Environment depth is not supported on this device.");
-        }
-        else if (occlusionManager.descriptor.environmentDepthImageSupported == Supported.Unknown)
-        {
-            Debug.Log("Determining environment depth support...");
-        }
-        else if (occlusionManager.descriptor.environmentDepthImageSupported == Supported.Supported)
-        {
-            Debug.Log("Environment depth is supported on this device.");
-        } */
-        var activeTouches
-            = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
-        if (activeTouches.Count < 1 || activeTouches[0].phase !=
-            TouchPhase.Began || putObject == false)
-        {
-            /* if (putObject == false && _curObject != null)
-            {
-                break;
-            } */
             return;
         }
-        putObject = false;
-        const TrackableType trackableTypes = TrackableType.Planes;
-        if (_raycastManager.Raycast(activeTouches[0].screenPosition, Hits,
+        UpdatePlacementPose();
+        UpdatePlacementIndicator();
+        /* if (_raycastManager.Raycast(activeTouches[0].screenPosition, Hits,
             trackableTypes))
         {
-            if (putObject == false && _curObject != null)
-            {
-                if (Hits.Count > 0)
-                {
-
-                }
-                return;
-            }
             if (_planeManager.enabled)
             {
-                CreateAnchor(Hits[0]);
+                Debug.Log("Placing object...");
+                PlaceObject(Hits[0]);
             }
             Debug.Log($"Instantiated on: {Hits[0].hitType}");
+        } */
+    }
+
+    private void UpdatePlacementPose()
+    {
+        var screenCenter = Camera.current.ViewportToScreenPoint(
+            new Vector3(0.5f, 0.5f));
+        /* var activeTouches
+            = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
+        // if no active touches have begun or we are not putting an object
+        if (activeTouches.Count < 1 || activeTouches[0].phase !=
+            TouchPhase.Began || puttingObject == false)
+        {
+            return;
+        } */
+        const TrackableType trackableTypes = TrackableType.PlaneWithinPolygon;
+        placementPoseIsValid = _raycastManager.Raycast(
+            screenCenter, Hits, trackableTypes);
+        if (placementPoseIsValid)
+        {
+            placementPose = Hits[0].pose;
+            // placementPose.position.y += 1;
+            var cameraForward = Camera.current.transform.forward;
+            var cameraBearing
+                = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
+            placementPose.rotation = Quaternion.LookRotation(cameraBearing);
+        }
+    }
+
+    private void UpdatePlacementIndicator()
+    {
+        if (placementPoseIsValid)
+        {
+            // Debug.Log($"Placement pose: {placementPose}");
+            placementIndicator.SetActive(true);
+            // Debug.Log($"Placement active: {placementIndicator.activeSelf}");
+            placementIndicator.transform.SetPositionAndRotation(
+                placementPose.position, placementPose.rotation);
+            // placementIndicator.transform.SetPositionAndRotation(
+            //     Vector3.zero, Quaternion.identity);
+        }
+        else
+        {
+            placementIndicator.SetActive(false);
         }
     }
 
@@ -129,6 +154,30 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         return results.Count > 0;
     } */
 
+    /* void PlaceObject(in ARRaycastHit hit)
+    {
+        if (hit.trackable is ARPlane plane)
+        {
+            if (!_curObject)
+            {
+                 GameObject trackedImageGameObject
+                    = _placeTrackedImages.trackedImageGameObject;
+                Debug.Log(
+                    $"Tracked image game object:{trackedImageGameObject}");
+                _curObject = PhotonNetwork.Instantiate(_prefabToPlaceName,
+                    hit.pose.position, hit.pose.rotation, 0);
+                Debug.Log($"Current object: {_curObject}");
+                Debug.Log($"Position: {hit.pose.position}, " +
+                        $"rotation: {hit.pose.rotation}");
+                _curObject.transform.SetParent(trackedImageGameObject.transform);
+            }
+            else
+            {
+                _curObject.transform.position = hit.pose.position;
+            }
+        }
+    }
+
     ARAnchor CreateAnchor(in ARRaycastHit hit)
     {
         ARAnchor anchor = null;
@@ -141,36 +190,22 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
                     = _placeTrackedImages.trackedImageGameObject;
                 Debug.Log(
                     $"Tracked image game object:{trackedImageGameObject}");
-                // var oldPrefab = _anchorManager.anchorPrefab;
-                
-                /* Debug.Log($"Current object: {_curObject}");
-                if (_curObject)
-                    return null; */
-
-                Debug.Log("Photon instantiating...");
-                // Debug.Log($": {_prefabToPlaceName}, {hit.pose},
-                // {trackedImageGameObject}");
                 _curObject = PhotonNetwork.Instantiate(
                     _prefabToPlaceName, Vector3.zero,
                     Quaternion.identity, 0);
-                Debug.Log($"Current object: {_curObject}");    
-                // curObject.transform.parent
-                //     = trackedImageGameObject.transform;
-                // _placedObjects.Add(curObject);
-                Debug.Log("Photon instantiated!");
-                // Debug.Log($"Position: {hit.pose.position}, " +
-                //     $"rotation: {hit.pose.rotation}");
+                Debug.Log($"Current object: {_curObject}");
+                Debug.Log($"Position: {hit.pose.position}, " +
+                    $"rotation: {hit.pose.rotation}");
                 this.photonView.RPC("PutPrefabInstance", RpcTarget.Others,
                     _prefabToPlaceName, hit.pose.position, hit.pose.rotation);
-                // _anchorManager.anchorPrefab = curObject;
+                var oldPrefab = _anchorManager.anchorPrefab;
+                _anchorManager.anchorPrefab = _curObject;
                 anchor = _anchorManager.AttachAnchor(plane, hit.pose);
-                // _anchorManager.anchorPrefab = oldPrefab;
+                _anchorManager.anchorPrefab = oldPrefab;
                 Debug.Log("Created anchor attachment for plane (id: " +
                      $"{anchor.nativePtr})");
-                _curObject.transform.SetParent(anchor.transform);
                 GameObject target = anchor.gameObject;
                 target.transform.SetParent(trackedImageGameObject.transform);
-                // target.transform.localPosition = Vector3.zero;
             }
             //else
             //{
@@ -184,23 +219,31 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
             //    Debug.Log($"Created regular anchor
             //     (id: {anchor.nativePtr})");
             //}
+            return anchor;
         }
 
+        _curObject = PhotonNetwork.Instantiate(
+                    _prefabToPlaceName, Vector3.zero,
+                    Quaternion.identity, 0);
+        Debug.Log($"Current object (out of plane): {_curObject}");
+        this.photonView.RPC("PutPrefabInstance", RpcTarget.Others,
+        _prefabToPlaceName, hit.pose.position, hit.pose.rotation);
+        anchor = ComponentUtils.GetOrAddIf<ARAnchor>(_curObject, true);
+                
         return anchor;
-    }
+    } */
 
     public void SetPrefab(string prefabName)
     {
         Debug.Log($"Changed prefab name: {prefabName}");
         _prefabToPlaceName = prefabName;
-        putObject = true;
+        // puttingObject = true;
     }
 
-    [PunRPC]
+    /* [PunRPC]
     public void PutPrefabInstance(string prefabName, Vector3 position,
         Quaternion rotation)
     {
-        // GameObject curObject = null;
         Debug.Log($"Position: {position}, rotation: {rotation}");
         foreach (GameObject gameObject
             in GameObject.FindObjectsOfType(typeof(GameObject)))
@@ -215,17 +258,18 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
                 break;
             }
         }
-
-        // _anchorManager.anchorPrefab = curObject;
+        var oldPrefab = _anchorManager.anchorPrefab;
+        _anchorManager.anchorPrefab = _curObject;
         ARAnchor anchor = _anchorManager.AttachAnchor(
             _placeTrackedImages._planes[0], new Pose(position, rotation));
         Debug.Log("Created anchor attachment for plane (id: " +
             $"{anchor.nativePtr}) at pose");
-        _curObject.transform.SetParent(anchor.transform);
+        _anchorManager.anchorPrefab = oldPrefab;
+        // _curObject.transform.SetParent(anchor.transform);
         GameObject target = anchor.gameObject;
         target.transform.SetParent(
             _placeTrackedImages.trackedImageGameObject.transform);
-    }
+    } */
 
     public void TogglePlaneDetection()
     {
@@ -237,4 +281,76 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
             plane.gameObject.SetActive(_planeManager.enabled);
         }
     }
+
+    public void PutObject()
+    {
+        _curObject = PhotonNetwork.Instantiate(_prefabToPlaceName,
+            Vector3.zero, Quaternion.identity, 0);
+        this.photonView.RPC("PutAnchor", RpcTarget.All,
+            _curObject.name, placementPose.position, placementPose.rotation);
+        Debug.Log("Sent change message");
+    }
+
+    [PunRPC]
+    void PutAnchor(string objectName, Vector3 position, Quaternion rotation)
+    {
+        Debug.Log($"Position: {position}, " +
+                        $"rotation: {rotation}");
+        foreach (GameObject gameObject
+            in GameObject.FindObjectsOfType(typeof(GameObject)))
+        {
+            if (gameObject.name == objectName)
+            {
+                Debug.Log($"Found object to anchor: {objectName}");
+                _curObject = gameObject;
+                break;
+            }
+        }
+        // _anchorManager.anchorPrefab = _prefabsDict[objectName];
+        Debug.Log($"Anchor prefab: {_anchorManager.anchorPrefab}");
+        var anchor = _anchorManager.AttachAnchor(_placeTrackedImages._planes[0], new Pose(position, rotation));
+        Debug.Log("Created anchor attachment for plane (id: " +
+           $"{anchor.nativePtr}) at pose");
+        _curObject.transform.SetPositionAndRotation(position, rotation);
+        _curObject.transform.SetParent(anchor.transform);
+        GameObject target = anchor.gameObject;
+        GameObject trackedImageGameObject
+            = _placeTrackedImages.trackedImageGameObject;
+        Debug.Log($"Tracked image game object:{trackedImageGameObject}");
+        target.transform.SetParent(trackedImageGameObject.transform);
+        /* _curObject.transform.SetParent(_placeTrackedImages.trackedImageGameObject.transform);
+        if (_curObject.GetComponent<ARAnchor>() == null)
+        {
+            _curObject.AddComponent<ARAnchor>();
+            Debug.Log("Anchor added!");
+        } */
+        // var oldPrefab = _anchorManager.anchorPrefab;
+        /* _anchorManager.anchorPrefab = _curObject;
+        ARAnchor anchor = _anchorManager.AttachAnchor(
+           _placeTrackedImages._planes[0], new Pose(position, rotation));
+        Debug.Log("Created anchor attachment for plane (id: " +
+           $"{anchor.nativePtr}) at pose");
+        GameObject target = anchor.gameObject;
+        target.transform.SetParent(
+            _placeTrackedImages.trackedImageGameObject.transform); */
+    }
+
+    /* [PunRPC]
+    public void UpdateObject(string objectName, Vector3 position,
+        Quaternion rotation)
+    {
+        Debug.Log($"Position: {position}, rotation: {rotation}");
+        foreach (GameObject gameObject
+            in GameObject.FindObjectsOfType(typeof(GameObject)))
+        {
+            if (gameObject.name == objectName)
+            {
+                Debug.Log($"Found object {objectName}");
+                gameObject.transform.position = position;
+                gameObject.transform.rotation = rotation;
+                Debug.Log("Changed transform");
+                break;
+            }
+        }
+    } */
 }
