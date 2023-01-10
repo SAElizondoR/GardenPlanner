@@ -282,8 +282,10 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     {
         _curObject = PhotonNetwork.Instantiate(_prefabToPlaceName,
             Vector3.zero, Quaternion.identity, 0);
+        var rotation = placementPose.rotation;
+        rotation.y += 90;
         this.photonView.RPC("PutAnchor", RpcTarget.All,
-            _curObject.name, placementPose.position, placementPose.rotation);
+            _curObject.name, placementPose.position, rotation);
         Debug.Log("Sent change message");
     }
 
