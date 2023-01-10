@@ -320,8 +320,9 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         var anchor = _anchorManager.AttachAnchor(_placeTrackedImages._planes[0], new Pose(position, rotation));
         Debug.Log("Created anchor attachment for plane (id: " +
            $"{anchor.nativePtr}) at pose");
-        _curObject.transform.SetPositionAndRotation(position, rotation);
+        
         _curObject.transform.SetParent(anchor.gameObject.transform);
+        _curObject.transform.localPosition = Vector3.zero;
         GameObject target = anchor.gameObject;
         GameObject trackedImageGameObject
             = _placeTrackedImages.trackedImageGameObject;
