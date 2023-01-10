@@ -60,7 +60,7 @@ public class RotateScaleObject : MonoBehaviour
         }
         if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
         {
-            //slidersPanel.gameObject.SetActive(true);
+            slidersPanel.gameObject.SetActive(true);
             ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
             if (Physics.Raycast(ray, out hit))
             {
