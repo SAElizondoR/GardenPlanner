@@ -2312,7 +2312,7 @@ MonoBehaviour:
     RequiredTag: 
     Camera: {fileID: 0}
     Distance: 50
-  deselectWithFingers: 0
+  deselectWithFingers: 1
   onSelectedFinger:
     m_PersistentCalls:
       m_Calls: []
@@ -2455,11 +2455,6 @@ MonoBehaviour:
   placementIndicator: {fileID: 707689101}
   _prefabToPlaceName: 
   _placeTrackedImages: {fileID: 1504054298}
-  _prefabsToPlace:
-  - name: cat
-    prefab: {fileID: 7807878135479024391, guid: b0fca04946f16cd4ba53d9746d78a36e, type: 3}
-  - name: FBX_Corona Variant
-    prefab: {fileID: 7107473178397769234, guid: fd7569f211659394ca014e636d613a3c, type: 3}
 --- !u!114 &1504054297
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,7 +19,7 @@ using System.Linq;
 public class ARPlaceHologram : MonoBehaviourPunCallbacks
 {
     public GameObject placementIndicator;
-    private bool placementIndicatorEnabled;
+    // private bool placementIndicatorEnabled;
     private bool placementPoseIsValid;
     private Pose placementPose;
 
@@ -37,13 +37,13 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     // private ARSessionOrigin _sessionOrigin;
     // if a button to put an object has been selected
     // private bool puttingObject;
-    [Serializable]
+    /* [Serializable]
     public struct NamedPrefab {
         public string name;
         public GameObject prefab;
     }
     public NamedPrefab[] _prefabsToPlace;
-    private IDictionary<string, GameObject> _prefabsDict;
+    private IDictionary<string, GameObject> _prefabsDict; */
 
     public override void OnEnable() {
         base.OnEnable();
@@ -66,18 +66,18 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         _curObject = null;
         // _placedObjects = new List<GameObject>();
         // puttingObject = false;
-        placementIndicatorEnabled = true;
+        // placementIndicatorEnabled = true;
         placementPoseIsValid = false;
-        _prefabsDict = _prefabsToPlace.ToDictionary(item => item.name, item => item.prefab);
+        // _prefabsDict = _prefabsToPlace.ToDictionary(item => item.name, item => item.prefab);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (placementIndicatorEnabled == false)
+        /* if (placementIndicatorEnabled == false)
         {
             return;
-        }
+        } */
         UpdatePlacementPose();
         UpdatePlacementIndicator();
         /* if (_raycastManager.Raycast(activeTouches[0].screenPosition, Hits,
@@ -110,10 +110,10 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         if (placementPoseIsValid)
         {
             placementPose = Hits[0].pose;
-            // placementPose.position.y += 1;
+            // set rotation from camera perspective
             var cameraForward = Camera.current.transform.forward;
             var cameraBearing
-                = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
+                = new Vector3(cameraForward.x, cameraForward.y, 0).normalized;
             placementPose.rotation = Quaternion.LookRotation(cameraBearing);
         }
     }
@@ -122,13 +122,9 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     {
         if (placementPoseIsValid)
         {
-            // Debug.Log($"Placement pose: {placementPose}");
             placementIndicator.SetActive(true);
-            // Debug.Log($"Placement active: {placementIndicator.activeSelf}");
             placementIndicator.transform.SetPositionAndRotation(
                 placementPose.position, placementPose.rotation);
-            // placementIndicator.transform.SetPositionAndRotation(
-            //     Vector3.zero, Quaternion.identity);
         }
         else
         {
@@ -312,7 +308,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         Debug.Log("Created anchor attachment for plane (id: " +
            $"{anchor.nativePtr}) at pose");
         _curObject.transform.SetPositionAndRotation(position, rotation);
-        _curObject.transform.SetParent(anchor.transform);
+        _curObject.transform.SetParent(anchor.gameObject.transform);
         GameObject target = anchor.gameObject;
         GameObject trackedImageGameObject
             = _placeTrackedImages.trackedImageGameObject;
