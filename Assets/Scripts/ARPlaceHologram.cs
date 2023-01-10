@@ -44,6 +44,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     }
     public NamedPrefab[] _prefabsToPlace;
     private IDictionary<string, GameObject> _prefabsDict; */
+    private int objectCounter;
 
     public override void OnEnable() {
         base.OnEnable();
@@ -69,6 +70,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         // placementIndicatorEnabled = true;
         placementPoseIsValid = false;
         // _prefabsDict = _prefabsToPlace.ToDictionary(item => item.name, item => item.prefab);
+        objectCounter = 0;
     }
 
     // Update is called once per frame
@@ -280,13 +282,32 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
 
     public void PutObject()
     {
-        _curObject = PhotonNetwork.Instantiate(_prefabToPlaceName,
-            Vector3.zero, Quaternion.identity, 0);
         var rotation = placementPose.rotation;
         rotation.y += 90;
+        _curObject = PhotonNetwork.Instantiate(_prefabToPlaceName,
+            Vector3.zero, Quaternion.identity, 0);
+        this.photonView.RPC("SetCurrentObject", RpcTarget.All,
+            _curObject.name, objectCounter);
         this.photonView.RPC("PutAnchor", RpcTarget.All,
             _curObject.name, placementPose.position, rotation);
         Debug.Log("Sent change message");
+    }
+
+    [PunRPC]
+    void SetCurrentObject(string oldName, int number)
+    {
+        foreach (GameObject gameObject
+            in GameObject.FindObjectsOfType(typeof(GameObject)))
+        {
+            if (gameObject.name == oldName)
+            {
+                Debug.Log($"Found current object: {oldName}");
+                gameObject.name = "Object" + number;
+                objectCounter = number + 1;
+                _curObject = gameObject;
+                break;
+            }
+        }
     }
 
     [PunRPC]
@@ -294,16 +315,6 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     {
         Debug.Log($"Position: {position}, " +
                         $"rotation: {rotation}");
-        foreach (GameObject gameObject
-            in GameObject.FindObjectsOfType(typeof(GameObject)))
-        {
-            if (gameObject.name == objectName)
-            {
-                Debug.Log($"Found object to anchor: {objectName}");
-                _curObject = gameObject;
-                break;
-            }
-        }
         // _anchorManager.anchorPrefab = _prefabsDict[objectName];
         Debug.Log($"Anchor prefab: {_anchorManager.anchorPrefab}");
         var anchor = _anchorManager.AttachAnchor(_placeTrackedImages._planes[0], new Pose(position, rotation));

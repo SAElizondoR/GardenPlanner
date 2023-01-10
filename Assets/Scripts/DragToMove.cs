@@ -33,7 +33,7 @@ public class DragToMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log($"Is selected: {_leanSelect.IsSelected}");
+        // Debug.Log($"Is selected: {_leanSelect.IsSelected}");
         if (!_leanSelect.IsSelected)
         {
             return;

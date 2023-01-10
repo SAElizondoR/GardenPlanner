@@ -46,6 +46,7 @@ MonoBehaviour:
   - PutPrefabInstance
   - UpdateObject
   - PutAnchor
+  - SetCurrentObject
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
