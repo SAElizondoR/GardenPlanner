@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: cb58e78d7cfcc924a9c803163fcd3d74
+labels:
+- Props
+- Environment
+- Plant
+- Decoration
+- Concrete
+- Interior
+- Nature
+- Palm
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
