@@ -36856,40 +36856,42 @@ struct ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275  : public MonoB
 	GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ___panel_5;
 	// UnityEngine.GameObject ARPlaceHologram::chooserPanel
 	GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ___chooserPanel_6;
+	// System.Single ARPlaceHologram::y_offset
+	float ___y_offset_7;
 	// UnityEngine.GameObject ARPlaceHologram::placementIndicator
-	GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ___placementIndicator_7;
+	GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ___placementIndicator_8;
 	// UnityEngine.UI.Button ARPlaceHologram::putButton
-	Button_t6786514A57F7AFDEE5431112FEA0CAB24F5AE098* ___putButton_8;
+	Button_t6786514A57F7AFDEE5431112FEA0CAB24F5AE098* ___putButton_9;
 	// UnityEngine.UI.Button ARPlaceHologram::removeButton
-	Button_t6786514A57F7AFDEE5431112FEA0CAB24F5AE098* ___removeButton_9;
+	Button_t6786514A57F7AFDEE5431112FEA0CAB24F5AE098* ___removeButton_10;
 	// System.Boolean ARPlaceHologram::placementPoseIsValid
-	bool ___placementPoseIsValid_10;
+	bool ___placementPoseIsValid_11;
 	// UnityEngine.Pose ARPlaceHologram::placementPose
-	Pose_t06BA69EAA6E9FAF60056D519A87D25F54AFE7971 ___placementPose_11;
+	Pose_t06BA69EAA6E9FAF60056D519A87D25F54AFE7971 ___placementPose_12;
 	// System.String ARPlaceHologram::_prefabToPlaceName
-	String_t* ____prefabToPlaceName_12;
+	String_t* ____prefabToPlaceName_13;
 	// UnityEngine.XR.ARFoundation.ARRaycastManager ARPlaceHologram::_raycastManager
-	ARRaycastManager_tD9459374F0F5BD9E2E4A8A1C665E7F33F9C2EE44* ____raycastManager_13;
+	ARRaycastManager_tD9459374F0F5BD9E2E4A8A1C665E7F33F9C2EE44* ____raycastManager_14;
 	// UnityEngine.XR.ARFoundation.ARAnchorManager ARPlaceHologram::_anchorManager
-	ARAnchorManager_tF68C46300BD6F2E83E3360BF9297C3C50F5D6B3E* ____anchorManager_14;
+	ARAnchorManager_tF68C46300BD6F2E83E3360BF9297C3C50F5D6B3E* ____anchorManager_15;
 	// UnityEngine.XR.ARFoundation.ARPlaneManager ARPlaceHologram::_planeManager
-	ARPlaneManager_t9DA6C512BDCFFBEE8B3DAA7170EB3BFFDE26A928* ____planeManager_15;
+	ARPlaneManager_t9DA6C512BDCFFBEE8B3DAA7170EB3BFFDE26A928* ____planeManager_16;
 	// ARRemoveHologram ARPlaceHologram::_removeHologram
-	ARRemoveHologram_t9E3C33A86709D8F92A509BB1D4CE6778C1C74586* ____removeHologram_16;
+	ARRemoveHologram_t9E3C33A86709D8F92A509BB1D4CE6778C1C74586* ____removeHologram_17;
 	// ARPlaceTrackedImages ARPlaceHologram::_placeTrackedImages
-	ARPlaceTrackedImages_t5205E95B74A01BFB6A82B65C9A3F3A92365BFFE8* ____placeTrackedImages_18;
+	ARPlaceTrackedImages_t5205E95B74A01BFB6A82B65C9A3F3A92365BFFE8* ____placeTrackedImages_19;
 	// UnityEngine.GameObject ARPlaceHologram::_curObject
-	GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ____curObject_19;
+	GameObject_t76FEDD663AB33C991A9C9A23129337651094216F* ____curObject_20;
 	// System.Int32 ARPlaceHologram::objectNumber
-	int32_t ___objectNumber_20;
+	int32_t ___objectNumber_21;
 	// System.Int32 ARPlaceHologram::counter
-	int32_t ___counter_21;
+	int32_t ___counter_22;
 };
 
 struct ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275_StaticFields
 {
 	// System.Collections.Generic.List`1<UnityEngine.XR.ARFoundation.ARRaycastHit> ARPlaceHologram::Hits
-	List_1_t0754071572EFE7A5C92A59495D2524FC935364E3* ___Hits_17;
+	List_1_t0754071572EFE7A5C92A59495D2524FC935364E3* ___Hits_18;
 };
 
 // ARPlaceTrackedImages
@@ -44846,9 +44848,9 @@ IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5708[2] =
 IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5711[2] = 
 {
 	static_cast<int32_t>(offsetof(PrefabChooser_tAB560154404CBA4E81251DD2E64F482111ED40FE, ___chooserPanel_4)),static_cast<int32_t>(offsetof(PrefabChooser_tAB560154404CBA4E81251DD2E64F482111ED40FE, ___panel_5)),};
-IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5712[17] = 
+IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5712[18] = 
 {
-	static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___panel_5)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___chooserPanel_6)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___placementIndicator_7)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___putButton_8)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___removeButton_9)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___placementPoseIsValid_10)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___placementPose_11)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____prefabToPlaceName_12)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____raycastManager_13)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____anchorManager_14)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____planeManager_15)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____removeHologram_16)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275_StaticFields, ___Hits_17)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____placeTrackedImages_18)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____curObject_19)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___objectNumber_20)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___counter_21)),};
+	static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___panel_5)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___chooserPanel_6)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___y_offset_7)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___placementIndicator_8)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___putButton_9)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___removeButton_10)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___placementPoseIsValid_11)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___placementPose_12)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____prefabToPlaceName_13)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____raycastManager_14)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____anchorManager_15)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____planeManager_16)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____removeHologram_17)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275_StaticFields, ___Hits_18)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____placeTrackedImages_19)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ____curObject_20)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___objectNumber_21)),static_cast<int32_t>(offsetof(ARPlaceHologram_t2E99C581985AA532BF976552C4C81A6FC028B275, ___counter_22)),};
 IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable5713[3] = 
 {
 	static_cast<int32_t>(offsetof(U3CWaitPlaneU3Ed__12_tF19D53CB8E60D412D4BBB4FB005F59019E0B66AE, ___U3CU3E1__state_0)),static_cast<int32_t>(offsetof(U3CWaitPlaneU3Ed__12_tF19D53CB8E60D412D4BBB4FB005F59019E0B66AE, ___U3CU3E2__current_1)),static_cast<int32_t>(offsetof(U3CWaitPlaneU3Ed__12_tF19D53CB8E60D412D4BBB4FB005F59019E0B66AE, ___U3CU3E4__this_2)),};

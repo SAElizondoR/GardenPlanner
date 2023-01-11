@@ -49,5 +49,6 @@ public class DragToMove : MonoBehaviour
             transform.position.x + touch.delta.x * modSpeed,
             transform.position.y,
             transform.position.z + touch.delta.y * modSpeed);
+        Debug.Log($"Position in Y: {transform.position.y}");
     }
 }

@@ -21,6 +21,8 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     public GameObject panel;
     public GameObject chooserPanel;
 
+    public float y_offset;
+
     public GameObject placementIndicator;
     public Button putButton;
     public Button removeButton;
@@ -116,6 +118,12 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         _prefabToPlaceName = prefabName;
     }
 
+    public void SetYOffset(float y)
+    {
+        Debug.Log("SetYOffset is called");
+        y_offset = y;
+    }
+
     public void TogglePlaneDetection()
     {
         Debug.Log("Change plane detection");
@@ -134,7 +142,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         rotation.y += 90;
         _curObject = PhotonNetwork.Instantiate(_prefabToPlaceName,
             Vector3.zero, Quaternion.identity, 0);
-        Debug.Log($"Current object: {_curObject.name}");
+        Debug.Log($"Current object: {_curObject.name}, {_curObject.transform.position.y}");
         this.photonView.RPC("SetCurrentObject", RpcTarget.All,
             _curObject.name, objectNumber);
         this.photonView.RPC("PutAnchor", RpcTarget.All,
@@ -178,6 +186,14 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
             = _placeTrackedImages.trackedImageGameObject;
         Debug.Log($"Tracked image game object:{trackedImageGameObject}");
         target.transform.SetParent(trackedImageGameObject.transform);
+
+        Debug.Log($"y offset {y_offset}");
+        _curObject.transform.localPosition = new Vector3(
+            _curObject.transform.localPosition.x,
+            _curObject.transform.localPosition.y + y_offset,
+            _curObject.transform.localPosition.z);
+        Debug.Log($"Current object: {_curObject.name}, {_curObject.transform.localPosition.y}");
+
         /* _curObject.transform.SetParent(_placeTrackedImages.trackedImageGameObject.transform);
         if (_curObject.GetComponent<ARAnchor>() == null)
         {
