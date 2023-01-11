@@ -18,6 +18,9 @@ using System.Linq;
 [RequireComponent(typeof(ARPlaneManager))]
 public class ARPlaceHologram : MonoBehaviourPunCallbacks
 {
+    public GameObject panel;
+    public GameObject chooserPanel;
+
     public GameObject placementIndicator;
     public Button putButton;
     public Button removeButton;
@@ -106,6 +109,9 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
 
     public void SetPrefab(string prefabName)
     {
+        chooserPanel.SetActive(false);
+        panel.SetActive(true);
+
         Debug.Log($"Changed prefab name: {prefabName}");
         _prefabToPlaceName = prefabName;
     }
@@ -128,6 +134,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         rotation.y += 90;
         _curObject = PhotonNetwork.Instantiate(_prefabToPlaceName,
             Vector3.zero, Quaternion.identity, 0);
+        Debug.Log($"Current object: {_curObject.name}");
         this.photonView.RPC("SetCurrentObject", RpcTarget.All,
             _curObject.name, objectNumber);
         this.photonView.RPC("PutAnchor", RpcTarget.All,
