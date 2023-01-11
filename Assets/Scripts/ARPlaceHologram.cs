@@ -131,7 +131,7 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
         this.photonView.RPC("SetCurrentObject", RpcTarget.All,
             _curObject.name, objectNumber);
         this.photonView.RPC("PutAnchor", RpcTarget.All,
-            _curObject.name, placementPose.position, rotation);
+            _curObject.name, placementPose.position);
         Debug.Log("Sent change message");
     }
 
@@ -155,22 +155,27 @@ public class ARPlaceHologram : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void PutAnchor(string objectName, Vector3 position, Quaternion rotation)
+    void PutAnchor(string objectName, Vector3 position)
     {
-        Debug.Log($"Position: {position}, " +
-                        $"rotation: {rotation}");
+        Debug.Log($"Position: {position}");
         Debug.Log($"Anchor prefab: {_anchorManager.anchorPrefab}");
-        var anchor = _anchorManager.AttachAnchor(_placeTrackedImages._planes[0], new Pose(position, rotation));
+        var anchor = _anchorManager.AttachAnchor(
+            _placeTrackedImages._planes[0],
+            new Pose(position, Quaternion.identity));
         Debug.Log("Created anchor attachment for plane (id: " +
            $"{anchor.nativePtr}) at pose");
-        
-        _curObject.transform.SetParent(anchor.gameObject.transform);
-        _curObject.transform.localPosition = Vector3.zero;
         GameObject target = anchor.gameObject;
         GameObject trackedImageGameObject
             = _placeTrackedImages.trackedImageGameObject;
         Debug.Log($"Tracked image game object:{trackedImageGameObject}");
         target.transform.SetParent(trackedImageGameObject.transform);
+        /* target.transform.localPosition = position;
+        target.transform.localRotation = Quaternion.identity;
+        target.transform.localScale = trackedImageGameObject.transform.localScale; */
+        _curObject.transform.SetParent(target.transform);
+        _curObject.transform.localPosition = Vector3.zero;
+        // _curObject.transform.localRotation = Quaternion.identity;
+        // _curObject.transform.localScale = target.transform.localScale;
         /* _curObject.transform.SetParent(_placeTrackedImages.trackedImageGameObject.transform);
         if (_curObject.GetComponent<ARAnchor>() == null)
         {
