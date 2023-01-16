@@ -57,6 +57,7 @@ sysinfo.txt
 
 # Builds
 *.apk
+!garden_planner.apk
 *.aab
 *.unitypackage
 *.app
