@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 7a61205394fc78848b99bbea6fc83c8e
+labels:
+- Props
+- Environment
+- Plant
+- Decoration
+- Concrete
+- Interior
+- Nature
+- Spikes
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
